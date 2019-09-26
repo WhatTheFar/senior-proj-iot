@@ -111,7 +111,7 @@ void postRequest(String date) {
   Serial.println(JSONmessageBuffer);
 
   HTTPClient http;
-  http.begin("http://192.168.1.34:3000/iot/sensor/co2"); //destination
+  http.begin("https://seniorproj.thinc.in.th/iot/sensor/multi","CC 42 E6 4C EB C9 3E 87 9B 66 E6 C5 D8 79 41 FE 12 AC D7 35"); //destination
   http.addHeader("Content-Type" , "application/json"); // content-type, header
   int httpResponseCode = http.POST(JSONmessageBuffer);
   if (httpResponseCode > 0) {

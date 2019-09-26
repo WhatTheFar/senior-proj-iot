@@ -5,12 +5,15 @@
 // Library
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
+//#include <WiFiClientSecure.h>
 #include <ArduinoJson.h> //Version 5
 #include <math.h>
 #include <MicroGear.h>
 
-const char* ssid = "true_home2G_Up7";
-const char* password = "vDcqdQQq";
+//const char* ssid = "true_home2G_Up7";
+//const char* password = "vDcqdQQq";
+const char* ssid = "CTiPhone";
+const char* password = "00000000";
 
 // Device No.
 const int DEVICENO = 1;
@@ -67,11 +70,6 @@ void setup() {
 }
 
 void loop() {
-
-  //  temperature = roundf(shtTempReader() * 1000) / 1000;
-  //  humidity = roundf(shtHumReader() * 1000) / 1000;
-  //  light = roundf(ldrReader() * 1000) / 1000;
-
   if (WiFi.status() == WL_CONNECTED) {
 
     // put your main code here, to run repeatedly:
@@ -86,29 +84,6 @@ void loop() {
       microgear.connect(APPID);
     }
     delay(250);
-
-    //    StaticJsonBuffer<256> jsonBuffer;
-    //    JsonObject& data = jsonBuffer.createObject();
-    //    //    data["timestamp"] = "10:00:00";
-    //    data["temp"] = temperature;
-    //    data["hum"] = humidity;
-    //    data["light"] = light;
-    //
-    //    char JSONmessageBuffer[256];
-    //    data.prettyPrintTo(JSONmessageBuffer, sizeof(JSONmessageBuffer));
-    //    Serial.println(JSONmessageBuffer);
-    //
-    //    HTTPClient http;
-    //    http.begin("http://192.168.1.34:3000/test"); //destination
-    //    http.addHeader("Content-Type" , "application/x-www-form-urlencoded"); // content-type, header
-    //    int httpResponseCode = http.POST(JSONmessageBuffer);
-    //    if (httpResponseCode > 0) {
-    //      String response = http.getString();
-    //    } else {
-    //      Serial.print("Error on sending POST:  ");
-    //      Serial.print(httpResponseCode);
-    //    }
-    //    http.end();
   } else {
     Serial.println("Error in WiFi connection");
   }
@@ -178,7 +153,7 @@ void postRequest(String date) {
   Serial.println(JSONmessageBuffer);
 
   HTTPClient http;
-  http.begin("http://192.168.1.34:3000/iot/sensor/multi"); //destination
+  http.begin("https://seniorproj.thinc.in.th/iot/sensor/multi","CC 42 E6 4C EB C9 3E 87 9B 66 E6 C5 D8 79 41 FE 12 AC D7 35"); //destination
   http.addHeader("Content-Type" , "application/json"); // content-type, header
   int httpResponseCode = http.POST(JSONmessageBuffer);
   if (httpResponseCode > 0) {
