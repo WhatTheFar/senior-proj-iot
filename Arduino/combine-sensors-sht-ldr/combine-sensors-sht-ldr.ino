@@ -173,12 +173,28 @@ void postRequest(String date) {
   Serial.println(JSONmessageBuffer);
 
   HTTPClient http;
-  http.begin("https://seniorproj.thinc.in.th/iot/sensor/multi","CC 42 E6 4C EB C9 3E 87 9B 66 E6 C5 D8 79 41 FE 12 AC D7 35"); //destination
+  http.begin(httpsURL, CAcert); //destination
   http.addHeader("Content-Type" , "application/json"); // content-type, header
   int httpResponseCode = http.POST(JSONmessageBuffer);
-  if (httpResponseCode > 0) {
+  if (httpResponseCode >= 200 && httpResponseCode < 400) {
     String response = http.getString();
+    Serial.print("httpResponseCode: ");
+    Serial.print(httpResponseCode);
+    Serial.print(" Response: ");
     Serial.println(response);
+  } else if (httpResponseCode >= 500) {
+    int counter = 0;
+    while (counter < 3) {
+      http.begin(httpsURL, CAcert); //destination
+      http.addHeader("Content-Type" , "application/json"); // content-type, header
+      httpResponseCode = http.POST(JSONmessageBuffer);
+      Serial.print("httpResponseCode: ");
+      Serial.print(httpResponseCode);
+      if(httpResponseCode >= 200 && httpResponseCode < 400){
+        counter = 3;
+      }
+      counter++;
+    }
   } else {
     Serial.print("Error on sending POST:  ");
     Serial.print(httpResponseCode);
