@@ -10,10 +10,22 @@
 #include <math.h>
 #include <MicroGear.h>
 
+// NTP Server
+#include <NTPClient.h>
+#include <WiFiUdp.h>
+const char *NTPServer = "1.th.pool.ntp.org";
+int timeOffset = 0 * 3600;
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP, NTPServer , timeOffset, 60000);
+
 //const char* ssid = "true_home2G_Up7";
 //const char* password = "vDcqdQQq";
 const char* ssid = "CTiPhone";
 const char* password = "00000000";
+
+// Https request URL and Key
+String httpsURL = "https://seniorproj.thinc.in.th/iot/sensor/multi";
+const char *CAcert = "CC 42 E6 4C EB C9 3E 87 9B 66 E6 C5 D8 79 41 FE 12 AC D7 35";
 
 // Device No.
 const int DEVICENO = 1;
@@ -38,6 +50,7 @@ MicroGear microgear(client);
 
 // Global Variable
 float temperature, humidity, light;
+String NTPtime;
 
 void setup() {
   Serial.begin(115200);
@@ -59,6 +72,9 @@ void setup() {
   microgear.init(KEY, SECRET, ALIAS);
   microgear.connect(APPID);
 
+  // NTP init
+  timeClient.begin();
+
   // 1. SHT Setup
   if (! sht31.begin(0x44)) {   // Set to 0x45 for alternate i2c addr
     Serial.println("Couldn't find SHT31");
@@ -71,7 +87,7 @@ void setup() {
 
 void loop() {
   if (WiFi.status() == WL_CONNECTED) {
-
+    timeClient.update();
     // put your main code here, to run repeatedly:
     if (microgear.connected())
     {
@@ -86,15 +102,14 @@ void loop() {
     delay(250);
   } else {
     Serial.println("Error in WiFi connection");
+    delay(250);
   }
 }
-
 
 float shtTempReader() {
   float temp = sht31.readTemperature();
   return temp;
 }
-
 
 float shtHumReader() {
   float hum = sht31.readHumidity();
@@ -139,10 +154,15 @@ void postRequest(String date) {
   temperature = roundf(shtTempReader() * 1000) / 1000;
   humidity = roundf(shtHumReader() * 1000) / 1000;
   light = roundf(ldrReader() * 1000) / 1000;
+  NTPtime = timeClient.getFormattedDate();
+
+  Serial.print("NTP time : ");
+  Serial.println(NTPtime);
 
   StaticJsonBuffer<256> jsonBuffer;
   JsonObject& data = jsonBuffer.createObject();
   data["date"] = date;
+  data["actualDate"] = NTPtime;
   data["device"] = DEVICENO;
   data["temp"] = temperature;
   data["hum"] = humidity;
