@@ -8,6 +8,13 @@
 #include <math.h>
 #include <MicroGear.h>
 
+// NTP Server
+#include <NTPClient.h>
+#include <WiFiUdp.h>
+const char *NTPServer = "1.th.pool.ntp.org";
+int timeOffset = 0 * 3600;
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP, NTPServer , timeOffset, 60000);
 //const char* ssid = "true_home2G_Up7";
 //const char* password = "vDcqdQQq";
 const char* ssid = "Chula FIRST";
@@ -19,6 +26,7 @@ const char* password = "0825519444";
 ZG09 zg09 = ZG09();
 
 float co2, CO2Result;
+String NTPtime;
 
 // Netpie Define
 #define APPID "seniorproj"
@@ -31,6 +39,8 @@ MicroGear microgear(client);
 
 void setup() {
   Serial.begin(9600);
+  // NTP init
+  timeClient.begin();
   Wire.begin();
   zg09.begin();
   for (int i = 0; i < 3; i++) {
@@ -46,6 +56,7 @@ void loop() {
   //  delay(1000);
 
   if (WiFi.status() == WL_CONNECTED) {
+    timeClient.update();
     // put your main code here, to run repeatedly:
     if (microgear.connected())
     {
@@ -102,10 +113,16 @@ void onConnected(char *attribute, uint8_t* msg, unsigned int msglen) {
 void postRequest(String date) {
   CO2Result = CO2Reader();
   CO2Result = CO2Reader();
+  NTPtime = timeClient.getFormattedDate();
+
+  Serial.print("NTP time : ");
+  Serial.println(NTPtime);
 
   StaticJsonBuffer<256> jsonBuffer;
   JsonObject& data = jsonBuffer.createObject();
   data["date"] = date;
+  data["actualDate"] = NTPtime;
+  data["device"] = DEVICENO;
   data["co2"] = CO2Result;
 
   char JSONmessageBuffer[256];
