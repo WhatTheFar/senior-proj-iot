@@ -8,8 +8,10 @@
 #include <math.h>
 #include <MicroGear.h>
 
-const char* ssid = "true_home2G_Up7";
-const char* password = "vDcqdQQq";
+//const char* ssid = "true_home2G_Up7";
+//const char* password = "vDcqdQQq";
+const char* ssid = "Chula FIRST";
+const char* password = "0825519444";
 
 // CO2 Define
 #include <Wire.h>
