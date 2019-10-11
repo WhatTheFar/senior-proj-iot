@@ -15,10 +15,18 @@ const char *NTPServer = "1.th.pool.ntp.org";
 int timeOffset = 0 * 3600;
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, NTPServer , timeOffset, 60000);
+
 //const char* ssid = "true_home2G_Up7";
 //const char* password = "vDcqdQQq";
 const char* ssid = "Chula FIRST";
 const char* password = "0825519444";
+
+// Https request URL and Key
+String httpsURL = "https://seniorproj.thinc.in.th/iot/sensor/co2";
+const char *CAcert = "CC 42 E6 4C EB C9 3E 87 9B 66 E6 C5 D8 79 41 FE 12 AC D7 35";
+
+// Device No.
+const int DEVICENO = 5;
 
 // CO2 Define
 #include <Wire.h>
@@ -38,9 +46,29 @@ WiFiClient client;
 MicroGear microgear(client);
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
+
+  // Microgear event listener
+  microgear.on(MESSAGE, onMsghandler);
+  microgear.on(CONNECTED, onConnected);
+
+  // Wifi setup
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.println("Connecting to WiFi..");
+  }
+  Serial.println("Connected to the WiFi network");
+  delay(1000);
+
+  // Microgear init
+  microgear.init(KEY, SECRET, ALIAS);
+  microgear.connect(APPID);
+
   // NTP init
   timeClient.begin();
+
+  // 1. CO2 Setup
   Wire.begin();
   zg09.begin();
   for (int i = 0; i < 3; i++) {
@@ -50,11 +78,6 @@ void setup() {
 }
 
 void loop() {
-
-  //  CO2Result = CO2Reader();
-  //  Serial.print("CO2: "); Serial.print(CO2Result); Serial.println("ppm");
-  //  delay(1000);
-
   if (WiFi.status() == WL_CONNECTED) {
     timeClient.update();
     // put your main code here, to run repeatedly:
@@ -71,10 +94,9 @@ void loop() {
     delay(250);
   } else {
     Serial.println("Error in WiFi connection");
+    delay(250);
   }
-
 }
-
 
 float CO2Reader() {
   int ret = zg09.readData();
@@ -111,7 +133,6 @@ void onConnected(char *attribute, uint8_t* msg, unsigned int msglen) {
 }
 
 void postRequest(String date) {
-  CO2Result = CO2Reader();
   CO2Result = CO2Reader();
   NTPtime = timeClient.getFormattedDate();
 
