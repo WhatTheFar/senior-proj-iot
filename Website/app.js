@@ -15,6 +15,16 @@ new Vue({
       //   });
     },
     resetNumberOfPeople: function() {
+      this.resetBtnIsClicked = true;
+      this.resetBtnDisable = true;
+      alert("Wait for 10 seconds");
+      setTimeout(
+        function() {
+          this.resetBtnIsClicked = false;
+          this.resetBtnDisable = false;
+        }.bind(this),
+        10000
+      );
       //   this.$http.post("action.php", this.numberOfPeople, function(data) {
       //
       //   });
