@@ -12,32 +12,41 @@
 <body>
     <div id="vue-app" class="container">
         <div class="row justify-content-md-center">
+            <img src="https://onefact.net/wp-content/uploads/2016/06/seniorproject.png" class="img-fluid"
+                alt="Responsive image" style="width:50%;height:50%;margin:20px;">
             <div class="col-12">
                 <!-- Set the number of people -->
-                <h1>Current number of people: {{ currentNumberOfPeople }}</h1>
+                <h2>Current number of people: <b>{{ currentNumberOfPeople }}</b></h2>
             </div>
-            <div class="col-3">
-                <!-- Set the number of people -->
-                <input v-model="numberOfPeople" id="people" type="number" placeholder="Insert your number of people" />
-                <button type="button" v-on:click="setNumberOfPeople()">
-                    Set
-                </button>
+            <div class="input-group col-12">
+                <input type="number" class="form-control" placeholder="# of people" v-model="numberOfPeople"
+                    style="color:black;font-size:50px;">
+                <div class="input-group-append" id="button-addon4">
+                    <button class="btn btn-success" type="button" data-toggle="modal" data-target="#confirmModal" :disabled="resetBtnDisable"
+                        style="paddingLeft:25px;paddingRight:25px;"><b>SET</b></button>
+                    <button class="btn btn-secondary" type="button" :disabled="resetBtnDisable"
+                        v-on:click="resetNumberOfPeople()">Reset Background</br>
+                        <h5 v-if="resetBtnIsClicked">(10s)</h5>
+                    </button>
+                </div>
             </div>
-            <div class="col-9">
-                <!-- Reset the number of people -->
-                <button type="button" v-on:click="resetNumberOfPeople()">
-                    Reset Background
-                </button>
+            <div class="d-flex align-items-center" v-if="resetBtnDisable">
+                <strong>Processing...</strong>
+                <div class="spinner-border ml-auto" role="status" aria-hidden="true" style="margin:20px;"></div>
             </div>
             <!-- Table -->
             <div class="col-12">
+                <hr>
+                <h2>Data Table</h2>
                 <table class="table">
-                    <thead>
+                    <thead class="thead-light">
                         <tr>
-                            <th scope="col">Time</th>
-                            <th scope="col">People</th>
-                            <th scope="col">XXX</th>
-                            <th scope="col">XXX</th>
+                            <th scope="col">Date&</br>Time</th>
+                            <th scope="col">Number of</br>People</th>
+                            <th scope="col">CO2</br>(ppm)</th>
+                            <th scope="col">Hum</br>(%)</th>
+                            <th scope="col">Temp</br>(*C)</th>
+                            <th scope="col">Light</br>(LUX)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -46,10 +55,14 @@
                             <td>12</td>
                             <td>XXX</td>
                             <td>XXX</td>
+                            <td>XXX</td>
+                            <td>XXX</td>
                         </tr>
                         <tr>
                             <th scope="row">12:00:30</th>
                             <td>11</td>
+                            <td>XXX</td>
+                            <td>XXX</td>
                             <td>XXX</td>
                             <td>XXX</td>
                         </tr>
@@ -58,10 +71,14 @@
                             <td>11</td>
                             <td>XXX</td>
                             <td>XXX</td>
+                            <td>XXX</td>
+                            <td>XXX</td>
                         </tr>
                         <tr>
                             <th scope="row">11:59:30</th>
                             <td>9</td>
+                            <td>XXX</td>
+                            <td>XXX</td>
                             <td>XXX</td>
                             <td>XXX</td>
                         </tr>

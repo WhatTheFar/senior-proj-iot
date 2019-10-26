@@ -2,7 +2,10 @@ new Vue({
   el: "#vue-app",
   data: {
     numberOfPeople: 0,
-    currentNumberOfPeople: 10
+    currentNumberOfPeople: 12,
+    resetBackgroundTimer: 10,
+    resetBtnIsClicked: false,
+    resetBtnDisable: false
   },
   methods: {
     setNumberOfPeople: function() {
