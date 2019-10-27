@@ -22,11 +22,11 @@ new Vue({
     resetNumberOfPeople: function() {
       this.resetBtnIsClicked = true;
       this.resetBtnDisable = true;
-      alert("Wait for 10 seconds");
       setTimeout(
         function() {
           this.resetBtnIsClicked = false;
           this.resetBtnDisable = false;
+          alert("Background reset successful!");
         }.bind(this),
         10000
       );
