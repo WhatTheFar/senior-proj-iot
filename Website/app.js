@@ -9,7 +9,12 @@ new Vue({
   },
   methods: {
     setNumberOfPeople: function() {
-      console.log(this.numberOfPeople);
+      if (this.numberOfPeople < 0) {
+        alert("Please input valid number" + "\n" + "The number must be equal or more than 0");
+      } else {
+        console.log("People: " + this.numberOfPeople);
+      }
+
       //   this.$http.post("action.php", this.numberOfPeople, function(data) {
       //
       //   });
