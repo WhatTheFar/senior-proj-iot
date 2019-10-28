@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="home container">
     <div class="row justify-content-md-center">
       <img
         src="https://onefact.net/wp-content/uploads/2016/06/seniorproject.png"
@@ -86,37 +86,13 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <th scope="row">12:01:00</th>
-              <td>12</td>
-              <td>XXX</td>
-              <td>XXX</td>
-              <td>XXX</td>
-              <td>XXX</td>
-            </tr>
-            <tr>
-              <th scope="row">12:00:30</th>
-              <td>11</td>
-              <td>XXX</td>
-              <td>XXX</td>
-              <td>XXX</td>
-              <td>XXX</td>
-            </tr>
-            <tr>
-              <th scope="row">12:00:00</th>
-              <td>11</td>
-              <td>XXX</td>
-              <td>XXX</td>
-              <td>XXX</td>
-              <td>XXX</td>
-            </tr>
-            <tr>
-              <th scope="row">11:59:30</th>
-              <td>9</td>
-              <td>XXX</td>
-              <td>XXX</td>
-              <td>XXX</td>
-              <td>XXX</td>
+            <tr v-for="(value, key) in tableData" :key="key">
+              <th scope="row">{{value.date}}</th>
+              <td>{{value.people}}</td>
+              <td>{{value.co2}}</td>
+              <td>{{value.hum}}</td>
+              <td>{{value.temp}}</td>
+              <td>{{value.light}}</td>
             </tr>
           </tbody>
         </table>
@@ -180,15 +156,26 @@
   </div>
 </template>
 <script lang="ts">
-// @ is an alias to /src
 import { Component, Vue } from "vue-property-decorator";
+import { SensorInfo } from "@/types/sensor";
 @Component
 export default class Home extends Vue {
   private numberOfPeople = 0;
-  private currentNumberOfPeople = 12;
   private resetBackgroundTimer = 10;
   private resetBtnIsClicked = false;
   private resetBtnDisable = false;
+  private tableData: Array<SensorInfo> = [];
+
+  async mounted() {
+    const result = await this.axios.get<SensorInfo[]>(
+      "http://localhost:3000/sensorResult"
+    );
+    this.tableData = result.data;
+  }
+
+  get currentNumberOfPeople(): number {
+    return this.tableData.length > 0 ? this.tableData[0].people : 0;
+  }
 
   private async setNumberOfPeople() {
     if (this.numberOfPeople < 0) {
